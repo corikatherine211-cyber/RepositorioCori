@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'mi.primera.app',
-  appName: 'mi-primera-app',
+  appId: 'mi.primer.ios.project',
+  appName: 'mi-primer-ios-project',
   webDir: 'dist'
 };
 

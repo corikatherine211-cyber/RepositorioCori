@@ -34,7 +34,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Camara',
     component: Camara,
     meta: {
-      requiresAuth: false
+      requiresAuth: true
     }
   },
   {
@@ -59,15 +59,13 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   const userStore = useUserStore();
   const isAuthenticated = !!userStore.token;
   if(to.meta.requiresAuth && !isAuthenticated) {
-    next('/login');
+    return '/login';
   }else if(isAuthenticated && !to.meta.requiresAuth) {
-    next('/seccion');
-  } else {
-    next();
+    return '/seccion';
   }
 });
 

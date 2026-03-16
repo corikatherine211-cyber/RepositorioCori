@@ -14,23 +14,35 @@
                      allowfullscreen>
                     </iframe>
             </div>
-            <pre>{{ contentStore.next }}</pre>
         </ion-content>
         <ion-footer :translucent="true">
             <ion-toolbar>
-            <ion-button slot="end" fill="solid" size="small" @click="siguiente()" v-if="contentStore.next.url">Siguiente</ion-button>
+            <ion-button 
+              slot="end" 
+              fill="solid" 
+              size="small" 
+              @click="siguiente()" 
+              class="boton-rojo"
+              v-if="contentStore.next.url">Siguiente</ion-button>
              <ion-progress-bar v-if="contentStore.loading" type="indeterminate"></ion-progress-bar>
             </ion-toolbar>
         </ion-footer>
     </ion-page>
+    <SkeletonText v-else></SkeletonText>
 </template>
 <script setup lang="ts">
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonFooter, IonButton, IonProgressBar } from '@ionic/vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useContentStore } from '@/stores/content';
+import SkeletonText from '@/components/SkeletonText.vue';
 const route = useRoute(); 
 const contentStore = useContentStore();
 const router = useRouter();
+
+
+contentStore.$getContent(contentStore.home.internal_name).then( res => {
+    router.push({ path: '/'+contentStore.home.url });
+});
 
 checkNext()
 
@@ -57,10 +69,13 @@ async function setNext(){
     item.sub.map( (sub_item: any) => {
       if(sub_item.id === contentStore.next.id) {
         sub_item.active = 'yes';
+        contentStore.$setHome(contentStore.next)
       }
     })
   })
-  sessionStorage.setItem('menu', JSON.stringify(contentStore.menu));
+  
+  localStorage.setItem('menu', JSON.stringify(contentStore.menu));
+  
 }
 
 async function siguiente(){
@@ -68,10 +83,11 @@ async function siguiente(){
         
         setNext();
         checkNext();
-        contentStore.$getContent(contentStore.next.internal_name).then( res => {
-            contentStore.$seteaSiguiente();
-            router.push('/' + contentStore.next.url);
-        })
+        contentStore.$seteaSiguiente();
+        router.push('/' + contentStore.next.url);
+        //contentStore.$getContent(contentStore.next.internal_name).then( res => {
+            
+        //})
     }
 }
 </script>
